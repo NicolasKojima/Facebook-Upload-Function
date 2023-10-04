@@ -1,0 +1,199 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="https://getbootstrap.com/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Album example for Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/album/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="album.css" rel="stylesheet">
+    <style>
+
+    .time-stamp {
+      padding-left: 5px;
+    }
+
+    .profilepicture  {
+      height: 200px; /* Set the desired container height */
+      border: 1px solid #ccc; /* Optional: Add a border for visualization */
+      overflow: hidden; /* Hide any image overflow */
+      justify-content: center;
+    }
+
+    .introduction {
+        font-size: small;
+        height: 50px; /* Adjust the height as per your requirements */
+        overflow: auto;
+        word-wrap: break-word;
+        margin-top: 5vh;
+        margin-right: 2vw;
+    }
+
+    .profilepicture img {
+      width: 100%; /* Occupy the full width of the container */
+      height: 100%; /* Occupy the full height of the container */
+      object-fit: cover; /* Scale the image to cover the entire container while maintaining aspect ratio */
+    }
+
+    .btn-primary {
+      width:120px;
+    }
+
+    .btn-secondary {
+      width:120px;
+    }
+
+    .links {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-grid {
+        margin-top: 5vh;
+        display: grid;
+        grid-template-columns: 60% 40%; 
+        grid-template-rows: min-content; 
+        position: relative;
+      }
+ 
+
+
+    </style>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h4 class="text-white">About</h4>
+              <p class="text-muted">Add some information about the album below, the author, or any other background context. Make it a few sentences long so folks can pick up some informative tidbits. Then, link them off to some social networking sites or contact information.</p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-4">
+              <h4 class="text-white">Contact</h4>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-white">Follow on Twitter</a></li>
+                <li><a href="#" class="text-white">Like on Facebook</a></li>
+                <li><a href="#" class="text-white">Email me</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar navbar-dark shadow-sm" style="background-color: black;">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <img src="{{ asset('storage/image/ZEALTEAM_logo.jpg') }}" alt="Image" class="image-size" style ="width:250px; height:50px;">          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main role="main">
+
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Meet the DC team</h1>
+          <p>
+            <div class="links">
+              <div class="link">
+                <a href="registration" class="btn btn-secondary my-2"> Registration</a>
+              </div>
+            </div>
+          </p>
+        </div>
+      </section>
+
+      <div class="album py-5 bg-light">
+  <div class="container">
+    <div class="row justify-content-center"> <!-- Center the boxes horizontally -->
+      @csrf
+      @foreach ($informations as $information)
+      <div class="col-md-4 mb-4"> <!-- Added 'col-md-4' class for column sizing and 'mb-4' for margin-bottom -->
+        <div class="card box-shadow">
+          <div class="profilepicture">
+            <img class="card-img-top mx-auto" src="{{ asset('storage/image/'.$information->profilepic) }}" alt="Card image cap" style="width: 100%;">
+          </div>
+          <div class="card-body">
+            <div class="post-grid">
+              <h6>{{$information->name}}</h6>
+              <small class="time-stamp" style="padding-left: 2px;">{{ $information->created_at->format('Y-m-d H:i:s') }}</small>
+            </div>
+            <!-- <p class="card-text">{{$information->email}}</p> -->
+            <a href="mailto:{{$information->email}}">{{$information->email}}</a>
+            <p class="introduction">{{$information->introduction}}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Skills</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Project History</button>
+
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="shareToFacebook('{{ $information->name }}', '{{ asset('storage/image/'.$information->profilepic) }}', '{{ route('information.show', $information->id) }}')">Share on Facebook</button>
+              </div>
+             
+            </div>
+          </div>
+        </div>
+      </div>
+      @endforeach
+    </div>
+  </div>
+</div>
+
+<script>
+
+function del(){
+
+  let text;
+if (confirm("Are you sure to delete ?") == true) {
+  document.getElementById("del-form").submit();
+} else {
+  return false;
+}
+}
+
+function shareToFacebook(title, image, url) {
+   // Construct the Facebook share URL
+   var shareUrl = 'https://www.facebook.com/sharer/sharer.php';
+   shareUrl += '?u=' + encodeURIComponent(url);
+   shareUrl += '&title=' + encodeURIComponent(title);
+   shareUrl += '&picture=' + encodeURIComponent(image);
+
+   // Open the share dialog in a new window
+   window.open(shareUrl, 'Facebook Share', 'width=600,height=400');
+}
+
+    </script>
+
+      </main>
+
+    <footer class="text-muted">
+      <div class="container">
+        <p class="float-right">
+          <a href="#">Back to top</a>
+        </p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/popper.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://getbootstrap.com/docs/4.0/assets/js/vendor/holder.min.js"></script>
+  </body>
+</html>
